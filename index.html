@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Valour Gestão de Milhas • Calculadora</title>
+    <style>
+      :root{
+        --bg:#070A07;
+        --panel:#0B0F0B;
+        --panel2:#0F1410;
+        --text:#EDEDED;
+        --muted:#A7B0A7;
+        --line:#1B241B;
+        --green:#39B54A; /* aproximado do verde da marca */
+        --green2:#2A8F37;
+        --black:#000;
+        --white:#fff;
+      }
+      *{box-sizing:border-box}
+      body{
+        margin:0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
+        background: radial-gradient(1200px 600px at 15% 10%, rgba(57,181,74,0.10), transparent 60%),
+                    radial-gradient(900px 500px at 85% 5%, rgba(57,181,74,0.08), transparent 55%),
+                    var(--bg);
+        color:var(--text);
+      }
+      a{color:inherit}
+      .container{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+      .topbar{
+        display:flex;align-items:center;justify-content:space-between;gap:16px;
+        padding:16px 18px;border:1px solid var(--line);border-radius:16px;
+        background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        backdrop-filter: blur(8px);
+      }
+      .brand{display:flex;align-items:center;gap:14px;min-width:0}
+      .brand img{height:44px;width:auto;display:block}
+      .brand .title{display:flex;flex-direction:column;min-width:0}
+      .brand .title strong{font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+      .brand .title span{font-size:12px;color:var(--muted)}
+      .pill{
+        display:inline-flex;align-items:center;gap:8px;
+        padding:8px 12px;border-radius:999px;
+        border:1px solid rgba(57,181,74,0.35);
+        background: rgba(57,181,74,0.10);
+        color:#d9ffde;
+        font-size:12px;
+        white-space:nowrap;
+      }
+      .hero{margin-top:22px;display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:stretch}
+      @media (max-width: 920px){.hero{grid-template-columns:1fr}}
+      .card{
+        border:1px solid var(--line);
+        border-radius:16px;
+        background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        padding:20px;
+      }
+      .card h1{margin:0 0 8px;font-size:30px;line-height:1.1}
+      .card p{margin:0;color:var(--muted)}
+      .ctaRow{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+      .btn{
+        border:1px solid var(--line);
+        background:rgba(255,255,255,0.04);
+        color:var(--text);
+        border-radius:12px;
+        padding:12px 14px;
+        font-weight:700;
+        cursor:pointer;
+      }
+      .btn.primary{
+        border-color: rgba(57,181,74,0.45);
+        background: linear-gradient(180deg, rgba(57,181,74,0.25), rgba(57,181,74,0.12));
+      }
+      .btn.primary:hover{background: linear-gradient(180deg, rgba(57,181,74,0.32), rgba(57,181,74,0.16));}
+      .btn:active{transform: translateY(1px)}
+      .small{font-size:12px;color:var(--muted)}
+
+      /* Steps */
+      .steps{margin-top:18px;display:grid;grid-template-columns:1fr;gap:14px}
+      .stepHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+      .stepHeader h2{margin:0;font-size:16px;letter-spacing:.04em;text-transform:uppercase}
+      .progressWrap{display:flex;align-items:center;gap:10px}
+      .progress{width:240px;max-width:42vw;height:8px;border-radius:999px;background:rgba(255,255,255,0.06);overflow:hidden;border:1px solid var(--line)}
+      .bar{height:100%;background:linear-gradient(90deg, var(--green), rgba(57,181,74,0.45));width:0%}
+      .stepBadge{font-size:12px;color:var(--muted)}
+
+      .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+      @media (max-width: 720px){.grid2{grid-template-columns:1fr}}
+
+      .qList{display:flex;flex-direction:column;gap:10px}
+      .qItem{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,0.03)}
+      .qItem label{font-weight:700;font-size:13px}
+      .seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+      .seg button{border:0;background:transparent;color:var(--muted);padding:8px 12px;cursor:pointer;font-weight:800;font-size:12px}
+      .seg button.active{background:rgba(57,181,74,0.18);color:#d9ffde}
+
+      .field{display:flex;flex-direction:column;gap:6px}
+      .field label{font-size:12px;color:var(--muted)}
+
+      .inputGroup{display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.03)}
+      .prefix{padding:11px 12px;color:#d9ffde;background:rgba(57,181,74,0.12);border-right:1px solid rgba(57,181,74,0.25);font-weight:900}
+      input, select{width:100%;padding:11px 12px;border:0;outline:none;background:transparent;color:var(--text);font-weight:800}
+      input::placeholder{color:rgba(255,255,255,0.25)}
+      .hint{font-size:11px;color:var(--muted)}
+
+      .advanced{margin-top:10px;border-top:1px dashed rgba(255,255,255,0.10);padding-top:12px}
+      details{border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,0.02);padding:10px}
+      summary{cursor:pointer;font-weight:900;color:#d9ffde}
+
+      /* Results */
+      .resultsGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+      @media (max-width: 920px){.resultsGrid{grid-template-columns:1fr}}
+
+      .tile{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,0.03);padding:14px}
+      .tile .k{font-size:12px;color:var(--muted);margin-bottom:6px}
+      .tile .v{font-size:22px;font-weight:1000;letter-spacing:0.02em}
+      .tile .v span{color:#d9ffde}
+
+      .totalCard{
+        margin-top:12px;
+        border-radius:18px;
+        border:1px solid rgba(57,181,74,0.40);
+        background: radial-gradient(900px 260px at 30% 0%, rgba(57,181,74,0.20), transparent 60%),
+                    linear-gradient(180deg, rgba(57,181,74,0.14), rgba(255,255,255,0.02));
+        padding:18px;
+      }
+      .totalCard .label{color:#d9ffde;text-transform:uppercase;letter-spacing:.10em;font-size:12px;font-weight:900}
+      .totalCard .big{font-size:44px;font-weight:1000;margin-top:6px}
+      @media (max-width: 720px){.totalCard .big{font-size:36px}}
+      .decision{margin-top:18px}
+      .decision h3{margin:0 0 6px;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+      .decision p{margin:0;color:var(--muted)}
+      .foot{margin-top:18px;font-size:11px;color:rgba(255,255,255,0.45)}
+      .hidden{display:none !important}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="topbar">
+        <div class="brand">
+          <img src="assets/logo.png" alt="Valour Gestão de Milhas" />
+          <div class="title">
+            <strong>Calculadora</strong>
+            <span>Diagnóstico financeiro de milhas • Valour</span>
+          </div>
+        </div>
+        <div class="pill">⚡ Descubra quanto você deixa de gerar por ano</div>
+      </header>
+
+      <section class="hero">
+        <div class="card">
+          <h1>Você está perdendo dinheiro todos os anos por não usar suas milhas da forma correta.</h1>
+          <p>Em poucos minutos, calcule seu <b>lucro potencial anual</b> com gestão de milhas — sem precisar gastar mais.</p>
+          <div class="ctaRow">
+            <button class="btn primary" id="btnStart">Começar agora</button>
+            <button class="btn" id="btnReset">Zerar</button>
+          </div>
+          <p class="small" style="margin-top:10px">Simulação baseada nas informações fornecidas. Resultados variam conforme mercado, regras dos programas e gestão ativa.</p>
+        </div>
+
+        <div class="card">
+          <div class="stepHeader" style="margin-bottom:8px">
+            <h2>Status</h2>
+            <div class="progressWrap">
+              <div class="progress"><div class="bar" id="bar"></div></div>
+              <div class="stepBadge" id="stepBadge">Etapa 1/4</div>
+            </div>
+          </div>
+          <div class="small" id="statusText">Preencha a anamnese e informe seus gastos. No final, você verá o impacto anual.</div>
+          <div style="margin-top:14px" class="small">
+            <b style="color:#d9ffde">Identidade visual:</b> preto + branco + verde Valour.
+          </div>
+        </div>
+      </section>
+
+      <section class="steps" id="steps">
+        <!-- STEP 1 -->
+        <div class="card" id="step1">
+          <div class="stepHeader">
+            <h2>Etapa 1 • Anamnese</h2>
+            <div class="stepBadge">Responda rápido (Sim/Não)</div>
+          </div>
+
+          <div class="qList" id="qList"></div>
+
+          <div class="ctaRow" style="margin-top:14px">
+            <button class="btn primary" id="toStep2">Continuar</button>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="card hidden" id="step2">
+          <div class="stepHeader">
+            <h2>Etapa 2 • Seus dados</h2>
+            <div class="stepBadge">Valores em R$</div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label>Gastos mensais no cartão • Pessoa Física</label>
+              <div class="inputGroup">
+                <div class="prefix">R$</div>
+                <input id="gastosPF" inputmode="decimal" placeholder="40.000,00" />
+              </div>
+              <div class="hint">Use apenas números. Ex.: 40000</div>
+            </div>
+            <div class="field">
+              <label>Gastos mensais no cartão • Pessoa Jurídica</label>
+              <div class="inputGroup">
+                <div class="prefix">R$</div>
+                <input id="gastosPJ" inputmode="decimal" placeholder="0,00" />
+              </div>
+              <div class="hint">Se não tiver, deixe 0</div>
+            </div>
+
+            <div class="field">
+              <label>Meses (padrão 12)</label>
+              <div class="inputGroup">
+                <div class="prefix">#</div>
+                <input id="meses" inputmode="numeric" placeholder="12" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Cotação do dólar (padrão 5,30)</label>
+              <div class="inputGroup">
+                <div class="prefix">US$</div>
+                <input id="dolar" inputmode="decimal" placeholder="5,30" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Companhia (para conversão do milheiro)</label>
+              <div class="inputGroup">
+                <select id="cia">
+                  <option value="LATAN">LATAM</option>
+                  <option value="AZUL">AZUL</option>
+                  <option value="GOL">GOL</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="advanced">
+            <details>
+              <summary>Configurações avançadas</summary>
+              <div class="grid2" style="margin-top:10px">
+                <div class="field">
+                  <label>Quantidade de CPFs para fabricação (padrão 3)</label>
+                  <div class="inputGroup">
+                    <div class="prefix">#</div>
+                    <input id="cpfs" inputmode="numeric" placeholder="3" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Link do WhatsApp (opcional)</label>
+                  <div class="inputGroup">
+                    <div class="prefix">WA</div>
+                    <input id="whats" placeholder="https://wa.me/55DDDNÚMERO" />
+                  </div>
+                  <div class="hint">Se vazio, o botão não abre link.</div>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="ctaRow" style="margin-top:14px">
+            <button class="btn" id="back1">Voltar</button>
+            <button class="btn primary" id="calc">Calcular</button>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="card hidden" id="step3">
+          <div class="stepHeader">
+            <h2>Etapa 3 • Resultados</h2>
+            <div class="stepBadge">Detalhamento anual</div>
+          </div>
+
+          <div class="resultsGrid">
+            <div class="tile"><div class="k">Rendimentos</div><div class="v" id="r_rend">R$ 0,00</div></div>
+            <div class="tile"><div class="k">Calculadora de Compras</div><div class="v" id="r_comp">R$ 0,00</div></div>
+            <div class="tile"><div class="k">Ganho com Fabricação de Milhas</div><div class="v" id="r_fab">R$ 0,00</div></div>
+            <div class="tile"><div class="k">Milhas Geradas com a Fabricação</div><div class="v" id="r_fabExtra">R$ 0,00</div></div>
+            <div class="tile"><div class="k">Descontos em Compra</div><div class="v" id="r_desc">R$ 0,00</div></div>
+            <div class="tile"><div class="k">Milhas com Boleto</div><div class="v" id="r_boleto">R$ 0,00</div></div>
+          </div>
+
+          <div class="totalCard">
+            <div class="label">Lucro Gestão • anual</div>
+            <div class="big" id="r_total">R$ 0,00</div>
+            <div class="small">Não é “ganhar mais”. É parar de desperdiçar o que já passa pela sua mão.</div>
+          </div>
+
+          <div class="ctaRow" style="margin-top:14px">
+            <button class="btn" id="back2">Voltar</button>
+            <button class="btn primary" id="toFinal">Ver impacto final</button>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="card hidden" id="step4">
+          <div class="decision">
+            <h3>Etapa 4 • Decisão</h3>
+            <p>Com o seu perfil atual, você está deixando de gerar pelo menos:</p>
+          </div>
+          <div class="totalCard" style="margin-top:12px">
+            <div class="label">Impacto anual</div>
+            <div class="big" id="finalTotal">R$ 0,00</div>
+          </div>
+          <div class="decision" style="margin-top:12px">
+            <p>Esse valor não exige que você gaste mais ou trabalhe mais. Ele existe porque hoje suas decisões não estão estruturadas.</p>
+          </div>
+          <div class="ctaRow" style="margin-top:14px">
+            <button class="btn primary" id="ctaWhats">Quero parar de perder esse dinheiro</button>
+            <button class="btn" id="back3">Ver detalhes</button>
+          </div>
+          <div class="foot">
+            Valores simulados com base nas informações fornecidas. Resultados variam conforme mercado, regras dos programas de fidelidade, acelerações disponíveis e gestão ativa. Não se trata de promessa ou garantia de rentabilidade.
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // ----------------------
+      // Helpers
+      // ----------------------
+      const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+      const clamp0 = (n) => (isFinite(n) && n > 0 ? n : 0);
+      const toNumber = (s) => {
+        if (s === null || s === undefined) return 0;
+        // aceita "40.000,00" ou "40000" etc
+        const v = String(s).trim().replace(/\./g, '').replace(',', '.').replace(/[^0-9.\-]/g, '');
+        const n = parseFloat(v);
+        return isFinite(n) ? n : 0;
+      };
+      const setBar = (step) => {
+        const pct = {1: 25, 2: 50, 3: 75, 4: 100}[step] || 25;
+        document.getElementById('bar').style.width = pct + '%';
+        document.getElementById('stepBadge').textContent = `Etapa ${step}/4`;
+      };
+      const show = (id) => document.getElementById(id).classList.remove('hidden');
+      const hide = (id) => document.getElementById(id).classList.add('hidden');
+
+      // ----------------------
+      // Anamnese
+      // ----------------------
+      const questions = [
+        'Você tem familiaridade com milhas?',
+        'Você já fez dinheiro com milhas?',
+        'Você conhece programa de pontos a fundo?',
+        'Você viaja mais que duas vezes de avião por ano?',
+        'Você sabe a regra de milha do seu cartão?',
+        'Você é empresário ou profissional liberal?',
+        'Você usa o cartão de crédito da sua empresa?'
+      ];
+      const answers = Array(questions.length).fill(null);
+      const qList = document.getElementById('qList');
+      questions.forEach((q, idx) => {
+        const row = document.createElement('div');
+        row.className = 'qItem';
+        const left = document.createElement('div');
+        const lab = document.createElement('label');
+        lab.textContent = q;
+        left.appendChild(lab);
+        const seg = document.createElement('div');
+        seg.className = 'seg';
+        const bYes = document.createElement('button');
+        bYes.textContent = 'SIM';
+        const bNo = document.createElement('button');
+        bNo.textContent = 'NÃO';
+        const sync = () => {
+          bYes.classList.toggle('active', answers[idx] === true);
+          bNo.classList.toggle('active', answers[idx] === false);
+        };
+        bYes.onclick = () => { answers[idx] = true; sync(); };
+        bNo.onclick = () => { answers[idx] = false; sync(); };
+        seg.appendChild(bYes);
+        seg.appendChild(bNo);
+        row.appendChild(left);
+        row.appendChild(seg);
+        qList.appendChild(row);
+      });
+
+      // ----------------------
+      // Inputs defaults
+      // ----------------------
+      const elPF = document.getElementById('gastosPF');
+      const elPJ = document.getElementById('gastosPJ');
+      const elMeses = document.getElementById('meses');
+      const elDolar = document.getElementById('dolar');
+      const elCia = document.getElementById('cia');
+      const elCpfs = document.getElementById('cpfs');
+      const elWhats = document.getElementById('whats');
+
+      const setDefaults = () => {
+        elPF.value = '40000';
+        elPJ.value = '0';
+        elMeses.value = '12';
+        elDolar.value = '5,30';
+        elCia.value = 'LATAN';
+        elCpfs.value = '3';
+        elWhats.value = '';
+      };
+      setDefaults();
+
+      // ----------------------
+      // Calculation core
+      // ----------------------
+      function calculateAll(input){
+        // Inputs
+        const gastosMensaisPF = clamp0(input.gastosMensaisPF);
+        const gastosMensaisPJ = clamp0(input.gastosMensaisPJ);
+        const meses = clamp0(input.meses || 12) || 12;
+        const cotacaoDolar = clamp0(input.cotacaoDolar || 5.30) || 5.30;
+        const cia = input.cia || 'LATAN';
+        const qtdCpfs = Math.max(0, Math.floor(input.qtdCpfs || 3));
+
+        // Constants
+        const aceleracaoGlobal = 0.30;
+        const variacaoPassagens = 0.30;
+        const melhoriaCartoes = 0.10;
+
+        const precoMilheiroRendimentos = { AZUL: 16, GOL: 16, LATAN: 25 };
+        const precoMilheiroCompras = { AZUL: 16, GOL: 16, LATAN: 25 };
+        const precoMilheiroBoleto = { AZUL: 16, GOL: 16, LATAN: 28 };
+
+        // Base
+        const gastoAnualPF_R = gastosMensaisPF * meses;
+        const gastoAnualPJ_R = gastosMensaisPJ * meses;
+        const gastoAnualPF_USD = gastoAnualPF_R / cotacaoDolar;
+        const gastoAnualPJ_USD = gastoAnualPJ_R / cotacaoDolar;
+
+        // 1) Rendimentos
+        const milhasPF_semGestao = gastoAnualPF_USD * 1;
+        const milhasPJ_semGestao = gastoAnualPJ_USD * 1;
+        const totalMilhas_semGestao = milhasPF_semGestao + milhasPJ_semGestao;
+
+        const milhasPF_comGestao = gastoAnualPF_USD * 4;
+        const milhasPJ_comGestao = gastoAnualPJ_USD * 1.5;
+        const milhasPF_comGestao_acel = milhasPF_comGestao * (1 + aceleracaoGlobal);
+        const milhasPJ_comGestao_acel = milhasPJ_comGestao * (1 + aceleracaoGlobal);
+        const totalMilhas_comGestao = milhasPF_comGestao_acel + milhasPJ_comGestao_acel;
+
+        const precoMilheiro_R = precoMilheiroRendimentos[cia] ?? 25;
+        const valorR_semGestao = (totalMilhas_semGestao / 1000) * precoMilheiro_R;
+        const valorR_comGestao = (totalMilhas_comGestao / 1000) * precoMilheiro_R;
+        const disponibilidadePassagens = valorR_comGestao * (1 + variacaoPassagens);
+        const rendimentos = disponibilidadePassagens * (1 + melhoriaCartoes);
+
+        // 2) Compras via clubes
+        const totalGastosAnuais = gastoAnualPF_R + gastoAnualPJ_R;
+        const valorComprasClubes_R = totalGastosAnuais * 0.15;
+        const valorAlocado_0 = valorComprasClubes_R * 0.30; const milhas_0 = valorAlocado_0 * 3;
+        const valorAlocado_1 = valorComprasClubes_R * 0.20; const milhas_1 = valorAlocado_1 * 4;
+        const valorAlocado_2 = valorComprasClubes_R * 0.20; const milhas_2 = valorAlocado_2 * 5;
+        const valorAlocado_3 = valorComprasClubes_R * 0.20; const milhas_3 = valorAlocado_3 * 6;
+        const valorAlocado_4 = valorComprasClubes_R * 0.10; const milhas_4 = valorAlocado_4 * 10;
+        const milhasFabricadasClubes = milhas_0 + milhas_1 + milhas_2 + milhas_3 + milhas_4;
+        const milhasFabricadasClubes_acel = milhasFabricadasClubes * (1 + aceleracaoGlobal);
+        const precoMilheiro_C = precoMilheiroCompras[cia] ?? 25;
+        const calculadoraDeCompras = (milhasFabricadasClubes_acel / 1000) * precoMilheiro_C;
+
+        // 3) Descontos em compra (boleto)
+        const comprasConvertidas_R = totalGastosAnuais * 0.15;
+        const economiaBruta_R = comprasConvertidas_R * 0.05;
+        const custoParceiro_R = comprasConvertidas_R * 0.029;
+        const descontosEmCompra = economiaBruta_R - custoParceiro_R;
+
+        // 4) Milhas com boleto
+        const baseNoCartao_R = comprasConvertidas_R - economiaBruta_R;
+        const baseNoCartao_USD = baseNoCartao_R / 5.30;
+        const milhasBoleto = baseNoCartao_USD * 4;
+        const milhasBoleto_acel = milhasBoleto * (1 + aceleracaoGlobal);
+        const precoMilheiro_B = precoMilheiroBoleto[cia] ?? 28;
+        const milhasComBoleto = (milhasBoleto_acel / 1000) * precoMilheiro_B;
+
+        // 5) Ganho com fabricação (lucro líquido)
+        const investimentoMensalPorCpf = 759;
+        const investimentoMensalTotal_R = qtdCpfs * investimentoMensalPorCpf;
+        const investimentoAnualTotal_R = investimentoMensalTotal_R * 12;
+        const milhasAnoPorCpf = 361000;
+        const aceleracaoFabricacao = 0.30;
+        const precoMilheiroVendaFabricacao = 26;
+        const milhasBaseFabricacao = milhasAnoPorCpf * qtdCpfs;
+        const milhasFabricacao_acel = milhasBaseFabricacao * (1 + aceleracaoFabricacao);
+        const receitaVendaFabricacao_R = (milhasFabricacao_acel / 1000) * precoMilheiroVendaFabricacao;
+        const ganhoComFabricacaoDeMilhas = receitaVendaFabricacao_R - investimentoAnualTotal_R;
+
+        // 6) Milhas geradas com a fabricação (pagar clube no cartão)
+        const investimentoAnual_USD = investimentoAnualTotal_R / 5.30;
+        const milhasDoPagamento = investimentoAnual_USD * 4;
+        const milhasDoPagamento_acel = milhasDoPagamento * (1 + aceleracaoFabricacao);
+        const milhasGeradasComAFabricacao = (milhasDoPagamento_acel / 1000) * 25;
+
+        // 7) total
+        const lucroGestao =
+          rendimentos +
+          calculadoraDeCompras +
+          ganhoComFabricacaoDeMilhas +
+          milhasGeradasComAFabricacao +
+          descontosEmCompra +
+          milhasComBoleto;
+
+        return {
+          rendimentos,
+          calculadoraDeCompras,
+          ganhoComFabricacaoDeMilhas,
+          milhasGeradasComAFabricacao,
+          descontosEmCompra,
+          milhasComBoleto,
+          lucroGestao,
+          debug: {
+            valorR_semGestao,
+            valorR_comGestao,
+            totalMilhas_semGestao,
+            totalMilhas_comGestao,
+            investimentoAnualTotal_R
+          }
+        };
+      }
+
+      // ----------------------
+      // Navigation
+      // ----------------------
+      let step = 1;
+      let lastResults = null;
+
+      function go(n){
+        step = n;
+        setBar(step);
+        ['step1','step2','step3','step4'].forEach((id,i)=>{
+          if(i===n-1) show(id); else hide(id);
+        });
+        const status = {
+          1: 'Preencha a anamnese. Isso nos ajuda a ajustar a comunicação do seu diagnóstico.',
+          2: 'Informe seus gastos e parâmetros. Os cálculos são anuais e seguem o racional da planilha.',
+          3: 'Aqui está o detalhamento. O número final é a soma das estratégias.',
+          4: 'Agora é o impacto: quanto você deixa de gerar por ano.'
+        };
+        document.getElementById('statusText').textContent = status[step] || '';
+        document.getElementById('btnStart').textContent = step === 1 ? 'Começar agora' : 'Continuar';
+      }
+      go(1);
+
+      // Buttons
+      document.getElementById('btnStart').onclick = () => {
+        if(step === 1) return;
+        // noop
+      };
+      document.getElementById('btnReset').onclick = () => {
+        answers.fill(null);
+        document.querySelectorAll('.seg button').forEach(b=>b.classList.remove('active'));
+        setDefaults();
+        lastResults = null;
+        ['r_rend','r_comp','r_fab','r_fabExtra','r_desc','r_boleto','r_total','finalTotal'].forEach(id=>{
+          const el = document.getElementById(id);
+          if(el) el.textContent = 'R$ 0,00';
+        });
+        go(1);
+      };
+      document.getElementById('toStep2').onclick = () => go(2);
+      document.getElementById('back1').onclick = () => go(1);
+      document.getElementById('back2').onclick = () => go(2);
+      document.getElementById('back3').onclick = () => go(3);
+
+      document.getElementById('calc').onclick = () => {
+        const input = {
+          gastosMensaisPF: toNumber(elPF.value),
+          gastosMensaisPJ: toNumber(elPJ.value),
+          meses: Math.floor(toNumber(elMeses.value) || 12),
+          cotacaoDolar: toNumber(elDolar.value) || 5.30,
+          cia: elCia.value,
+          qtdCpfs: Math.floor(toNumber(elCpfs.value) || 3)
+        };
+        lastResults = calculateAll(input);
+
+        document.getElementById('r_rend').textContent = brl.format(lastResults.rendimentos);
+        document.getElementById('r_comp').textContent = brl.format(lastResults.calculadoraDeCompras);
+        document.getElementById('r_fab').textContent = brl.format(lastResults.ganhoComFabricacaoDeMilhas);
+        document.getElementById('r_fabExtra').textContent = brl.format(lastResults.milhasGeradasComAFabricacao);
+        document.getElementById('r_desc').textContent = brl.format(lastResults.descontosEmCompra);
+        document.getElementById('r_boleto').textContent = brl.format(lastResults.milhasComBoleto);
+        document.getElementById('r_total').textContent = brl.format(lastResults.lucroGestao);
+        document.getElementById('finalTotal').textContent = brl.format(lastResults.lucroGestao);
+
+        go(3);
+      };
+
+      document.getElementById('toFinal').onclick = () => {
+        if(!lastResults){ return; }
+        document.getElementById('finalTotal').textContent = brl.format(lastResults.lucroGestao);
+        go(4);
+      };
+
+      document.getElementById('ctaWhats').onclick = () => {
+        const link = (elWhats.value || '').trim();
+        if(link){ window.open(link, '_blank'); }
+      };
+
+      // Start button actually moves user to step 1 and scroll
+      document.getElementById('btnStart').onclick = () => {
+        document.getElementById('step1').scrollIntoView({behavior:'smooth', block:'start'});
+      };
+    </script>
+  </body>
+</html>
