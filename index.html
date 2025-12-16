@@ -139,7 +139,7 @@
     <div class="container">
       <header class="topbar">
         <div class="brand">
-           <img src="2t.png">
+          <img src="assets/logo.png" alt="Valour Gestão de Milhas" />
           <div class="title">
             <strong>Calculadora</strong>
             <span>Diagnóstico financeiro de milhas • Valour</span>
@@ -252,14 +252,6 @@
                     <input id="cpfs" inputmode="numeric" placeholder="3" />
                   </div>
                 </div>
-                <div class="field">
-                  <label>Link do WhatsApp (opcional)</label>
-                  <div class="inputGroup">
-                    <div class="prefix">WA</div>
-                    <input id="whats" placeholder="https://wa.me/55DDDNÚMERO" />
-                  </div>
-                  <div class="hint">Se vazio, o botão não abre link.</div>
-                </div>
               </div>
             </details>
           </div>
@@ -312,18 +304,8 @@
             <p>Esse valor não exige que você gaste mais ou trabalhe mais. Ele existe porque hoje suas decisões não estão estruturadas.</p>
           </div>
           <div class="ctaRow" style="margin-top:14px">
-<button class="cta-button" onclick="window.open('https://wa.me/5573998062002?text=Quero%20saber%20mais%20sobre%20a%20gest%C3%A3o%20de%20milhas.','_blank')">
-  Quero parar de perder esse dinheiro
-</button>
-            <button
-  class="cta-button"
-  onclick="window.open(
-    'https://wa.me/5573998062002?text=Quero%20saber%20mais%20sobre%20a%20gest%C3%A3o%20de%20milhas.',
-    '_blank'
-  )"
->
-  Quero parar de perder esse dinheiro
-</button>            <button class="btn" id="back3">Ver detalhes</button>
+            <button class="btn primary" id="ctaWhats">Quero parar de perder esse dinheiro</button>
+            <button class="btn" id="back3">Ver detalhes</button>
           </div>
           <div class="foot">
             Valores simulados com base nas informações fornecidas. Resultados variam conforme mercado, regras dos programas de fidelidade, acelerações disponíveis e gestão ativa. Não se trata de promessa ou garantia de rentabilidade.
@@ -402,7 +384,7 @@
       const elDolar = document.getElementById('dolar');
       const elCia = document.getElementById('cia');
       const elCpfs = document.getElementById('cpfs');
-      const elWhats = document.getElementById('whats');
+      const WHATSAPP_URL = "https://wa.me/5573998062002?text=Quero%20saber%20mais%20sobre%20a%20gest%C3%A3o%20de%20milhas.";
 
       const setDefaults = () => {
         elPF.value = '40000';
@@ -411,7 +393,7 @@
         elDolar.value = '5,30';
         elCia.value = 'LATAN';
         elCpfs.value = '3';
-        elWhats.value = '';
+        // WhatsApp é fixo para evitar quebra de paths/config em publicação
       };
       setDefaults();
 
@@ -605,8 +587,7 @@
       };
 
       document.getElementById('ctaWhats').onclick = () => {
-        const link = (elWhats.value || '').trim();
-        if(link){ window.open(link, '_blank'); }
+        window.open(WHATSAPP_URL, '_blank');
       };
 
       // Start button actually moves user to step 1 and scroll
